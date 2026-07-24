@@ -1,3 +1,4 @@
+%%writefile app.py
 import streamlit as st
 import pandas as pd
 from sklearn.model_selection import train_test_split
@@ -13,16 +14,11 @@ df = pd.read_csv("heart.csv")
 st.subheader("Dataset")
 st.dataframe(df)
 
-# Encode text columns
-df_encoded = df.copy()
+# Encode categorical columns
+df_encoded = pd.get_dummies(df, drop_first=True)
 
-encoders = {}
-
-for col in df_encoded.columns:
-    if df_encoded[col].dtype == "object":
-        le = LabelEncoder()
-        df_encoded[col] = le.fit_transform(df_encoded[col])
-        encoders[col] = le
+# Remove missing values
+df_encoded = df_encoded.dropna()
 
 # Features & Target
 X = df_encoded.drop("HeartDisease", axis=1)
